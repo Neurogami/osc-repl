@@ -29,13 +29,13 @@ The config file must be a YAML file that has at least two keys:
     :port: <port number of OSC server>
 
 
-The program runs in a loop.  You enter the OSC address pattern and args (if any) to send and hit Enter.
+The program runs in a loop, giving you a command-line prompt, awaiting your bidding.
 
-Once the app is running it never reload the config file.
+You enter the OSC address pattern and args (if any) to send and hit Enter.
 
+Once the app is running it never reloads the config file.
 
-The apps sends the OSC message and awaits the next command.
-
+The apps sends the OSC message and waits for the next command.
 
 You can send integers, floats, and strings. Sorry, no OSC blob support. Or that OSC time-stamp thing either. As a practical matter, anecdotal experience says that 99% of the OSC use case will involve floats, and maybe integers.
 
@@ -52,7 +52,7 @@ For example:
 
 Do not use commas to separate the arguments.  They might work, or they might confuse the simple arguments parser in the app.
 
-The app uses the `readline` lib so you can use the arrow keys to recall previous commands. 
+The app uses the `readline` lib so you can use the arrow keys to recall previous commands, inclusing the commands you may have included when first launching the program.
 
 Enter 'q' or 'Q' to quit.
 
