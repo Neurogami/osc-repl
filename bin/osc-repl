@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+root = File.expand_path('../..', __FILE__)
+require File.join(root, %w[lib osc-repl])
+require File.join(root, %w[lib core])
+
+
+
+include Neurogami
+
+if  ARGV.first.to_s.strip =~ /^-h/ 
+  OscRepl::Core.help 
+else
+
+
+OscRepl::Core.new(ARGV.shift, ARGV).run 
+end
+
+
