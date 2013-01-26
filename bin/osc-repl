@@ -11,9 +11,7 @@ include Neurogami
 if  ARGV.first.to_s.strip =~ /^-h/ 
   OscRepl::Core.help 
 else
-
-
-OscRepl::Core.new(ARGV.shift, ARGV).run 
+  OscRepl::Core.new(ARGV.shift, ARGV).run 
 end
 
 
