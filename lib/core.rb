@@ -87,10 +87,14 @@ module Neurogami
 
 
       def send s
+        warn "*** send has #{s.inspect}"
         message, s = *(s.split /\s/, 2)
 
         args = string_to_args s
+        warn "*** raw args is: #{args.inspect}"
         args.map! { |a| arg_to_type a }
+
+        warn "**** Sending message with converted args.inspect: #{args.inspect}"
 
         msg = OSC::Message.new message, *args  
 

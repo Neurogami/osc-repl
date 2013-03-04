@@ -16,3 +16,6 @@ announcement.txt
 coverage
 doc
 pkg
+.__
+.bnsignore 
+.gitignore

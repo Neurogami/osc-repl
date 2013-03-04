@@ -21,13 +21,17 @@ end
 module Utils
 
 
-  # The idea is to take a string and convert it inot an array of message arguments
+  # The idea is to take a string and convert it into an array of message arguments
   # The method needs to carefully split based on how text is presented.
   # Numbers are easy, but text strings must be identified by the use
   # of quotation marks. To do this the method needs to walk through the characters
   # and use a flag to track when it is looking inside some quoted text
 
+# A problem sems ot be how to create an array to return that is able to disinguish stirng-stirngs from
+  # number string.  Right now, everything comes back as text, but some of that text is just
+  # a text representatoin of a number, other text is actual String values
   def string_to_args  s = nil
+    warn " --- string_to_args has #{s.inspect}"
 
     return [] unless s
 
@@ -42,7 +46,7 @@ module Utils
         args_ary_size = args_ary.length;
 
      # Leave out adding the quote character since we're dealing withal strings anyways
-     #   args_ary[args_ary_size-1] <<  letter
+        args_ary[args_ary_size-1] <<  letter
 
       else 
         if  letter == ' '  && !in_text 
@@ -61,9 +65,21 @@ module Utils
 
 
   def arg_to_type a
+# This is broken if you are trying to send quoted numbers as text: "002", for example
 
+
+    
+    warn "---- arg_to_type has #{a}"
+    
+    if a =~ /^"/ &&  a =~ /"$/ 
+      #It is a forced string; a string that has quotations  on each end.  Remove them
+      a.sub! /^"/, ''
+      a.sub! /"$/, ''
+      return a
+    end
+
+    
     if a =~ /\d\.\d/ 
-      warn "'#{a}' is a float"
       if a.to_f == 0.0
         if a == '0'
           0
@@ -74,7 +90,6 @@ module Utils
         a.to_f
       end
     else
-      warn "Not a float"
       if a == '0'
         0
       elsif a.to_i > 0 
