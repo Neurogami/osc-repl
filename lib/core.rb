@@ -29,13 +29,8 @@ module Neurogami
 
       def initialize config_file_path=nil,  initial_messages=nil
  
-        config_file  = config_file_path || Dir.pwd + '/' + DEFAULT_CONFIG 
+        config_file = config_file_path || Dir.pwd + '/' + DEFAULT_CONFIG 
 
-        if  initial_messages 
-           @initial_messages = initial_messages.join ' '
-        end
-
-        warn "@initial_messages : #{@initial_messages.inspect }"
         @config = load_config config_file 
 
         unless @config
@@ -45,6 +40,20 @@ module Neurogami
           exit
         end
 
+        warn "@config  #{@config }"
+
+        if @config[:initial_messages]
+          warn "@config[:initial_messages] = #{@config[:initial_messages].inspect}"
+            initial_messages ||= []
+            initial_messages.concat @config[:initial_messages].map{|m| "#{m},"}
+        end
+        
+        if initial_messages 
+           @initial_messages = initial_messages.join ' '
+        end
+
+        warn "@initial_messages : #{@initial_messages.inspect }"
+        
         @client = OSC::Client.new @config[:address], @config[:port]
 
       end
