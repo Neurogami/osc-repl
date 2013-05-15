@@ -17,7 +17,11 @@ Bones {
   url      'http://code.neurogami.com'
   depends_on ['osc-ruby']
   description "Provides a REPL for sending arbitray OSC commands to some server." 
-  gem.extras( {"signing_key" => '/home/james/Dropbox/gem-certs/ng-gem-private_key.pem'} )
+  gem.extras( {
+    
+    "signing_key" => '/home/james/Dropbox/gem-certs/ng-gem-private_key.pem',
+     "cert_chain" =>  %w{ng-gem-public_cert.pem}
+  } )
   
   exclude %w{ .git .__ .bnsignore .gitignore }
 }
