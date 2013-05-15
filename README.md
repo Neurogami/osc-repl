@@ -29,6 +29,14 @@ The config file must be a YAML file that has at least two keys:
     :port: <port number of OSC server>
 
 
+ You can also use the config file to preload some OSC commands:
+
+
+    :initial_messages: 
+     - /animata/layer/layer_0001/image jgb-doll2.png
+     - /animata/move/joint head 10.0 10.0
+
+
 The program runs in a loop, giving you a command-line prompt, awaiting your bidding.
 
 You enter the OSC address pattern and args (if any) to send and hit Enter.
