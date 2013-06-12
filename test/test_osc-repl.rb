@@ -6,7 +6,7 @@ warn( File.dirname(__FILE__) + "/.." )
 require 'lib/utils'
 
 class TestUtils < Test::Unit::TestCase
-
+ include Utils
   def test_simple
     s = '24 "002" "Some text"'
     assert_equal ["24", "\"002\"", "\"Some text\""], string_to_args(s)
