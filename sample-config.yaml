@@ -1,3 +1,12 @@
 :port: 8000
 :address: 127.0.0.1
 
+:initial_messages:
+  - /renoise/transport/start
+  - /renoise/transport/stop
+  - /renoise/song/bpm 122
+  - /renoise/song/lpb 4
+  - /renoise/song/sequence/trigger 8 
+  - /renoise/song/sequence/trigger 2 | /renoise/song/bpm 122 | /renoise/transport/start 
+
+

@@ -17,6 +17,21 @@ module Neurogami
 
       DEFAULT_CONFIG = '.osc-config.yaml'
 
+      def string_to_bundle s
+
+        messages = s.split '|'
+        warn "string_to_bindle has messages #{messages.inspect}"
+        messages.map!{|_| 
+          _.strip!
+        string_to_message _
+        }
+
+        Bundle.new Time.now, *messages
+
+
+
+      end
+
       def self.help
         puts "\tUsage:"
         puts "\tWhen run with no arguments the program expects to find the config file #{DEFAULT_CONFIG} in the current directory."
@@ -28,7 +43,7 @@ module Neurogami
       end
 
       def initialize config_file_path=nil,  initial_messages=nil
- 
+
         config_file = config_file_path || Dir.pwd + '/' + DEFAULT_CONFIG 
 
         @config = load_config config_file 
@@ -44,16 +59,16 @@ module Neurogami
 
         if @config[:initial_messages]
           warn "@config[:initial_messages] = #{@config[:initial_messages].inspect}"
-            initial_messages ||= []
-            initial_messages.concat @config[:initial_messages].map{|m| "#{m},"}
+          initial_messages ||= []
+          initial_messages.concat @config[:initial_messages].map{|m| "#{m},"}
         end
-        
+
         if initial_messages 
-           @initial_messages = initial_messages.join ' '
+          @initial_messages = initial_messages.join ' '
         end
 
         warn "@initial_messages : #{@initial_messages.inspect }"
-        
+
         @client = OSC::Client.new @config[:address], @config[:port]
 
       end
@@ -72,12 +87,12 @@ module Neurogami
 
         # We allow the user to provide a set of message to prepopulate the REPL history
         if @initial_messages  
-            @initial_messages.split(',').reverse.each do |m|
-              m.strip!
-               Readline::HISTORY.push m 
-               initial_message = m
-            end
-            puts "*** Use the arrow keys to pull up your pre-loaded messages. ***\n"
+          @initial_messages.split(',').reverse.each do |m|
+            m.strip!
+            Readline::HISTORY.push m 
+            initial_message = m
+          end
+          puts "*** Use the arrow keys to pull up your pre-loaded messages. ***\n"
         end
 
 
@@ -95,31 +110,74 @@ module Neurogami
       end
 
 
-      def send s
-        warn "*** send has #{s.inspect}"
+      def string_to_message s
+
         message, s = *(s.split /\s/, 2)
 
         args = string_to_args s
         warn "*** raw args is: #{args.inspect}"
         args.map! { |a| arg_to_type a }
 
-        warn "**** Sending message with converted args.inspect: #{args.inspect}"
+        warn "**** Creating message with converted args.inspect: #{args.inspect}"
+        raise "Failed to trap pipe in  converted args!" if args.include? "|"
 
-        msg = OSC::Message.new message, *args  
+        OSC::Message.new message, *args  
+      end
 
-        t = Thread.new do
-          begin
-            @client.send msg
-          rescue 
-            warn '!'*80
-            warn "Error sending OSC message: #{$!}"
-            warn '!'*80
+      def bundle? s
+        warn "Check '#{s}' if bundle?"
+        _ = s =~ /\|/ ? true : false
+        warn "Seems to be #{_}"
+        _
+      end
+
+      def send s
+        warn "*** send has #{s.inspect}"
+        if bundle? s
+          b = string_to_bundle s 
+           t = Thread.new do
+            begin
+              @client.send b
+            rescue 
+              warn '!'*80
+              warn "Error sending OSC message: #{$!}"
+              warn '!'*80
+            end
           end
+
+          t.join
+          sleep 0.02
+        else
+
+   if s =~/\|/
+   
+          raise "Cannot use '|' unless sending a bundle in '#{s}'"
+   end
+      
+   
+          #message, s = *(s.split /\s/, 2)
+
+          #args = string_to_args s
+          #warn "*** raw args is: #{args.inspect}"
+          #args.map! { |a| arg_to_type a }
+
+          #warn "**** Sending message with converted args.inspect: #{args.inspect}"
+
+          msg = string_to_message s 
+
+          t = Thread.new do
+            begin
+              @client.send msg
+            rescue 
+              warn '!'*80
+              warn "Error sending OSC message: #{$!}"
+              warn '!'*80
+            end
+          end
+
+          t.join
+          sleep 0.02
         end
-
-        t.join
-        sleep 0.02
-
       end
 
 
