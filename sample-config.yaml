@@ -1,7 +1,8 @@
-:port: 8000
+:port: 8001
 :address: 127.0.0.1
 
 :initial_messages:
+  - /test/message "String01" "String02"
   - /renoise/transport/start
   - /renoise/transport/stop
   - /renoise/song/bpm 122

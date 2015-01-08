@@ -1,7 +1,7 @@
 warn "Loading #{__FILE__}"
 
 require 'yaml'
-require 'osc-ruby'
+require 'osc-ruby-ng'
 require 'utils'
 require "readline"
 
@@ -9,26 +9,22 @@ require "readline"
 module Neurogami
   module OscRepl
 
-
     class Core
       include  OSC
       include Utils
-
 
       DEFAULT_CONFIG = '.osc-config.yaml'
 
       def string_to_bundle s
 
         messages = s.split '|'
-        warn "string_to_bindle has messages #{messages.inspect}"
+        warn "[DEBUG] string_to_bundle has messages #{messages.inspect}"
         messages.map!{|_| 
           _.strip!
         string_to_message _
         }
 
         Bundle.new Time.now, *messages
-
-
 
       end
 
@@ -43,9 +39,7 @@ module Neurogami
       end
 
       def initialize config_file_path=nil,  initial_messages=nil
-
         config_file = config_file_path || Dir.pwd + '/' + DEFAULT_CONFIG 
-
         @config = load_config config_file 
 
         unless @config
@@ -134,6 +128,7 @@ module Neurogami
       def send s
         warn "*** send has #{s.inspect}"
         if bundle? s
+          warn "[DEBUG] This is a bundle"
           b = string_to_bundle s 
            t = Thread.new do
             begin
@@ -148,12 +143,9 @@ module Neurogami
           t.join
           sleep 0.02
         else
-
-   if s =~/\|/
-   
-          raise "Cannot use '|' unless sending a bundle in '#{s}'"
-   end
-      
+          if s =~/\|/
+            raise "Cannot use '|' unless sending a bundle in '#{s}'"
+          end
    
           #message, s = *(s.split /\s/, 2)
 
@@ -164,6 +156,7 @@ module Neurogami
           #warn "**** Sending message with converted args.inspect: #{args.inspect}"
 
           msg = string_to_message s 
+          warn "Sending message #{msg.inspect}"
 
           t = Thread.new do
             begin

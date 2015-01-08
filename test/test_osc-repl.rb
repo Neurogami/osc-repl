@@ -18,8 +18,8 @@ class TestUtils < Test::Unit::TestCase
   end
 
   def test_number_strings
-    s = '003 "002" "Some text"'
-    assert_equal [ '003', "\"002\"", "\"Some text\""], string_to_args(s)
+    s = '003 "002" -23 "Some text"'
+    assert_equal [ '003', "\"002\"", '-23', "\"Some text\""], string_to_args(s)
   end
 
   def test_number_strings_to_args
